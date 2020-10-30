@@ -42,12 +42,12 @@ class SchoolCrudController extends CrudController
     protected function setupListOperation()
     {
 //        CRUD::setFromDb(); // columns
-        CRUD::addColumn(['name' => 'name', 'type' => 'text','wrapper' => [
+        CRUD::addColumn(['name' => 'name', 'type' => 'text',
+            'wrapper' => [
                 // 'element' => 'a', // the element will default to "a" so you can skip it here
                 'href' => function ($crud, $column, $entry, $related_key) {
                     return backpack_url('school-' . $entry->id . '/class_list');
                 },
-                 'target' => '_blank',
                 // 'class' => 'some-class',
                 ]
             ,]);
