@@ -79,7 +79,7 @@ class SclassCrudController extends CrudController
             'wrapper' => [
                 // 'element' => 'a', // the element will default to "a" so you can skip it here
                 'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('school-' . $related_key . '/class_list');
+                    return backpack_url('school-'.$entry->school_id.'/class_list');
                 },
                 // 'class' => 'some-class',
                 ]

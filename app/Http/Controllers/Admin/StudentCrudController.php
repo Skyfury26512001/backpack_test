@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StudentRequest;
+use App\Models\Sclass;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -60,9 +61,9 @@ class StudentCrudController extends CrudController
                 'wrapper' => [
                     // 'element' => 'a', // the element will default to "a" so you can skip it here
                     'href' => function ($crud, $column, $entry, $related_key) {
-                        return backpack_url('class-' . $related_key . '/student_list');
+                        $school_id = Sclass::find($related_key)->school->id;
+                        return backpack_url('school-'.$school_id.'/class-' . $related_key . '/student_list');
                     },
-                    'target' => '_blank',
                     // 'class' => 'some-class',
                 ]
             ]
