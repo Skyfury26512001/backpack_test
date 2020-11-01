@@ -31,16 +31,28 @@ class SclassCrudController extends CrudController
 //        dd(123);
         CRUD::setModel(\App\Models\Sclass::class);
         $id = request()->route()->parameter('school_id');
-        if ($id != null){
-            CRUD::setRoute(config('backpack.base.route_prefix')  .'/school-'.$id .'/class_list');
-            $this->crud->addClause('where','school_id','=',$id);
-            CRUD::setEntityNameStrings( School::find($id)->name . ' : Class ' , School::find($id)->name . ' : Classes ' );
-        }else{
+        if ($id != null) {
+            CRUD::setRoute(config('backpack.base.route_prefix') . '/school-' . $id . '/class_list');
+            $this->crud->addClause('where', 'school_id', '=', $id);
+            CRUD::setEntityNameStrings(School::find($id)->name . ' : Class ', School::find($id)->name . ' : Classes ');
+        } else {
             CRUD::setRoute(config('backpack.base.route_prefix') . '/school/sclass');
             CRUD::setEntityNameStrings('Class', 'Classes');
         }
+        // select2 filter
+        $this->crud->addFilter([
+            'name'  => 'school_id',
+            'type'  => 'select2',
+            'label' => 'School'
+        ], function () {
+            return \App\Models\School::all()->pluck('name', 'id')->toArray();
+        }, function ($value) { // if the filter is active
+            $this->crud->addClause('where', 'school_id', $value);
+        });
+
 
     }
+
 
     /**
      * Define what happens when the List operation is loaded.
@@ -51,39 +63,44 @@ class SclassCrudController extends CrudController
     protected function setupListOperation()
     {
 //        CRUD::setFromDb(); // columns
-        CRUD::addColumn(['name' => 'name', 'type' => 'text','wrapper' => [
-                // 'element' => 'a', // the element will default to "a" so you can skip it here
-                'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('school-'.$entry->school_id.'/class-' . $entry->id . '/student_list');
-                },
-                // 'class' => 'some-class',
-                ]
-            ]);
+        CRUD::addColumn(['name' => 'name', 'type' => 'text', 'wrapper' => [
+            // 'element' => 'a', // the element will default to "a" so you can skip it here
+            'href' => function ($crud, $column, $entry, $related_key) {
+                return backpack_url('school-' . $entry->school_id . '/class-' . $entry->id . '/student_list');
+            },
+            // 'class' => 'some-class',
+        ]
+        ]);
         CRUD::addColumn([
             // relationship count
-            'name' => 'students', // name of relationship method in the model
+            'name'   => 'students', // name of relationship method in the model
             'entity' => 'students',
-            'type' => 'relationship_count',
-            'label' => 'Students', // Table column heading
+            'type'   => 'relationship_count',
+            'label'  => 'Students', // Table column heading
             // OPTIONAL
             'suffix' => ' students', // to show "123 tags" instead of "123 items"
 
-            ],
-        );
+        ]);
         CRUD::addColumn([
             // relationship count
-            'name' => 'school', // name of relationship method in the model
-            'entity' => 'school',
-            'type' => 'select',
-            'label' => 'School Name', // Table column heading
-            'wrapper' => [
+            'name'        => 'school', // name of relationship method in the model
+            'entity'      => 'school',
+            'type'        => 'select',
+            'label'       => 'School Name', // Table column heading
+            'wrapper'     => [
                 // 'element' => 'a', // the element will default to "a" so you can skip it here
                 'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('school-'.$entry->school_id.'/class_list');
+                    return backpack_url('school-' . $entry->school_id . '/class_list');
                 },
                 // 'class' => 'some-class',
-                ]
-            ],);
+            ],
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->orWhereHas('school', function ($q) use ($column, $searchTerm) {
+                    $q->where('name', 'like', '%' . $searchTerm . '%');
+                });
+            }
+        ]);
+
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -102,7 +119,6 @@ class SclassCrudController extends CrudController
         CRUD::setValidation(SclassRequest::class);
 
         CRUD::setFromDb(); // fields
-
 
 
         /**

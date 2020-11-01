@@ -42,31 +42,46 @@ class SchoolCrudController extends CrudController
     protected function setupListOperation()
     {
 //        CRUD::setFromDb(); // columns
-        CRUD::addColumn(['name' => 'name', 'type' => 'text',
-            'wrapper' => [
-                // 'element' => 'a', // the element will default to "a" so you can skip it here
-                'href' => function ($crud, $column, $entry, $related_key) {
-                    return backpack_url('school-' . $entry->id . '/class_list');
-                },
-                // 'class' => 'some-class',
-                ]
-            ,]);
+        CRUD::addColumn(['name'    => 'name', 'type' => 'text',
+                         'wrapper' => [
+                             // 'element' => 'a', // the element will default to "a" so you can skip it here
+                             'href' => function ($crud, $column, $entry, $related_key) {
+                                 return backpack_url('school-' . $entry->id . '/class_list');
+                             },
+                             // 'class' => 'some-class',
+                         ]
+                         ,]);
         CRUD::addColumn([
             // relationship count
-            'name' => 'sclasses', // name of relationship method in the model
-            'type' => 'relationship_count',
-            'label' => 'Classes', // Table column heading
+            'name'   => 'sclasses', // name of relationship method in the model
+            'type'   => 'relationship_count',
+            'label'  => 'Classes', // Table column heading
             // OPTIONAL
-             'suffix' => ' classes', // to show "123 tags" instead of "123 items"
-        ],);
+            'suffix' => ' classes', // to show "123 tags" instead of "123 items
+        ]);
+        $this->crud->addColumn([
+            'label'           => 'Classes',
+            'type'            => 'select',
+            'entity'          => 'sclasses',
+            'model'           => 'App\Models\Sclass',
+            'visibleInTable'  => true, // no point, since it's a large text
+            'visibleInModal'  => true, // would make the modal too big
+            'visibleInExport' => true, // not important enough
+            'visibleInShow'   => false,
+            'searchLogic'     => function ($query, $column, $searchTerm) {
+                $query->orWhereHas('sclasses', function ($q) use ($column, $searchTerm) {
+                    $q->where('name', 'like', '%' . $searchTerm . '%');
+                });
+            }
+        ]);
         CRUD::addColumn([
             // relationship count
-            'name' => 'students',
-            'entity'=>'students',
-            'type' => 'relationship_count',
-            'label' => 'Students',
-             'suffix' => ' student',
-        ],);
+            'name'   => 'students',
+            'entity' => 'students',
+            'type'   => 'relationship_count',
+            'label'  => 'Students',
+            'suffix' => ' student',
+        ]);
 
 
         /**

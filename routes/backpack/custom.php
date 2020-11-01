@@ -20,6 +20,7 @@ Route::group([
     Route::crud('/school', 'SchoolCrudController');
     Route::crud('/school/sclass', 'SclassCrudController');
     Route::crud('/school-{school_id}/class_list','SclassCrudController');
+    Route::get('/school/sclass/student/ajax-student', ['StudentCrudController','StudentFilter']); // no need
     Route::crud('/school/sclass/student', 'StudentCrudController');
     Route::crud('/school-{school_id}/class-{class_id}/student_list','StudentCrudController');
 
