@@ -31,9 +31,10 @@ class StudentCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Student::class);
         $class_id  = request()->route()->parameter('class_id');
-        $school_id = request()->route()->parameter('class_id');
+        $school_id = request()->route()->parameter('school_id');
+        $student_id = request()->route()->parameter('student_id');
 //        dd($this->crud);
-        if ($class_id != null && $school_id != null) {
+        if ($class_id != null && $school_id != null && $student_id != null) {
             CRUD::setRoute(config('backpack.base.route_prefix') . '/school-' . $school_id . '/class-' . $class_id . '/student_list');
             $this->crud->addClause('where', 'class_id', '=', $class_id);
 
@@ -52,13 +53,6 @@ class StudentCrudController extends CrudController
         });
     }
 
-
-    public function StudentFilter(Request $request)
-    {
-        $term    = $request->input('term');
-        $options = Student::where('name', 'like', '%' . $term . '%')->get()->pluck('name', 'id');
-        return $options;
-    }
 
     /**
      * Define what happens when the List operation is loaded.
@@ -82,7 +76,7 @@ class StudentCrudController extends CrudController
                     // 'element' => 'a', // the element will default to "a" so you can skip it here
                     'href' => function ($crud, $column, $entry, $related_key) {
                         $school_id = Sclass::find($related_key)->school->id;
-                        return backpack_url('school-' . $school_id . '/class-' . $related_key . '/student_list');
+                        return backpack_url('school-' . $school_id . '/class-' . $related_key . '/student');
                     },
                     // 'class' => 'some-class',
                 ]

@@ -50,6 +50,19 @@ class SclassCrudController extends CrudController
             $this->crud->addClause('where', 'school_id', $value);
         });
 
+//        $this->crud->addFilter([
+//            'name'  => 'schools',
+//            'type'  => 'select2_multiple',
+//            'label' => 'Schools'
+//        ], function () { // the options that show up in the select2
+//            return School::all()->pluck('name', 'id')->toArray();
+//        }, function ($values) { // if the filter is active
+//            foreach (json_decode($values) as $key => $value) {
+//                $this->crud->query = $this->crud->query->whereHas('school', function ($query) use ($value) {
+//                    $query->Where('school_id', $value);
+//                });
+//            }
+//        });
 
     }
 
@@ -60,7 +73,8 @@ class SclassCrudController extends CrudController
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
-    protected function setupListOperation()
+    protected
+    function setupListOperation()
     {
 //        CRUD::setFromDb(); // columns
         CRUD::addColumn(['name' => 'name', 'type' => 'text', 'wrapper' => [
@@ -114,7 +128,8 @@ class SclassCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
-    protected function setupCreateOperation()
+    protected
+    function setupCreateOperation()
     {
         CRUD::setValidation(SclassRequest::class);
 
@@ -134,7 +149,8 @@ class SclassCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected
+    function setupUpdateOperation()
     {
         $this->setupCreateOperation();
     }
