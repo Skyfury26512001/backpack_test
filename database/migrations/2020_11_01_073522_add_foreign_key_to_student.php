@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSclassesTable extends Migration
+class AddForeignKeyToStudent extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateSclassesTable extends Migration
      */
     public function up()
     {
-        Schema::create('sclasses', function (Blueprint $table) {
-            $table->id();
-            $table->integer('display_order');
-            $table->unsignedBigInteger('school_id');
-            $table->text('name');
-            $table->timestamps();
+        Schema::table('students', function (Blueprint $table) {
+            $table->foreign('class_id')->references('id')->on('sclasses');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateSclassesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sclasses');
+        Schema::table('student', function (Blueprint $table) {
+            //
+        });
     }
 }

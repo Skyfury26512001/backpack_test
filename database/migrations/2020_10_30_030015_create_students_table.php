@@ -18,7 +18,7 @@ class CreateStudentsTable extends Migration
             $table->id();
             $table->smallInteger('display_order');
             $table->unsignedBigInteger('class_id');
-            $table->foreign('class_id')->references('id')->on('sclasses');
+
             $table->bigInteger('user_id');
             $table->string('name',255);
             $table->string('school_hope',255);
