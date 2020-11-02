@@ -17,6 +17,7 @@ Route::group([
     'namespace'  => 'App\Http\Controllers\Admin',
 ], function () { // custom admin routes
 
+    Route::get('test/ajax-category-options', 'SchoolCrudController@categoryOptions');
     Route::crud('/school', 'SchoolCrudController');
     Route::crud('/school/sclass', 'SclassCrudController');
     Route::crud('/school-{school_id}/class_list','SclassCrudController');

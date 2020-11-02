@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\SchoolRequest;
+use App\Models\School;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use http\Env\Request;
@@ -31,6 +32,23 @@ class SchoolCrudController extends CrudController
         CRUD::setModel(\App\Models\School::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/school');
         CRUD::setEntityNameStrings('school', 'schools');
+        $this->crud->addFilter([
+            'name' => 'school_id',
+            'type' => 'select2_ajax',
+            'label' => 'School',
+            'placeholder' => 'Pick a school'
+        ],
+            url('admin/test/ajax-category-options'), // the ajax route
+            function ($value) { // if the filter is active
+                 $this->crud->addClause('name', 'like', '%'.$value.'%');
+            });
+    }
+
+    public function schoolOptions(Request $request)
+    {
+        $term = $request->input('term');
+        $options = School::where('name', 'like', '%' . $term . '%')->get()->pluck('name', 'id');
+        return $options;
     }
 
     /**
@@ -49,7 +67,7 @@ class SchoolCrudController extends CrudController
                     return backpack_url('school-' . $entry->id . '/class_list');
                 },
                 // 'class' => 'some-class',
-                ]
+            ]
             ,]);
         CRUD::addColumn([
             // relationship count
@@ -57,15 +75,15 @@ class SchoolCrudController extends CrudController
             'type' => 'relationship_count',
             'label' => 'Classes', // Table column heading
             // OPTIONAL
-             'suffix' => ' classes', // to show "123 tags" instead of "123 items"
+            'suffix' => ' classes', // to show "123 tags" instead of "123 items"
         ],);
         CRUD::addColumn([
             // relationship count
             'name' => 'students',
-            'entity'=>'students',
+            'entity' => 'students',
             'type' => 'relationship_count',
             'label' => 'Students',
-             'suffix' => ' student',
+            'suffix' => ' student',
         ],);
 
 
